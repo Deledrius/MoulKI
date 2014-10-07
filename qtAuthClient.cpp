@@ -55,7 +55,6 @@ void qtAuthClient::onAcctLoginReply(uint32_t, ENetError result,
 
     setStatus("Auth Successful");
     this->acctUuid = acctUuid;
-    this->sendFileListRequest("SDL", "sdl");
 
     emit gotEncKeys(encryptKey[0], encryptKey[1],
             encryptKey[2], encryptKey[3]);

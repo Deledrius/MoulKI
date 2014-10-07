@@ -11,6 +11,7 @@
 #include <QLabel>
 #include <QScrollBar>
 #include <QFileDialog>
+#include <QDirIterator>
 
 Q_DECLARE_METATYPE(plUuid)
 Q_DECLARE_METATYPE(plString)
@@ -196,6 +197,19 @@ void MoulKI::login(QString user, QString pass, QString iniFilename) {
             this, SLOT(setEncryptionKeys(uint32_t,uint32_t,uint32_t,uint32_t)));
     connect(authClient, SIGNAL(gotSDLFile(hsStream*)), this,
             SLOT(loadStateDescriptors(hsStream*)));
+
+    QDirIterator it(QCoreApplication::applicationDirPath()+QString("/")+"SDL");
+    while (it.hasNext()) {
+        it.next();
+        if (it.fileName().endsWith(".sdl")) {
+            QString filepath = it.filePath();
+            if (it.fileInfo().size() == 0) {
+                qWarning("Warning: ignoring zero size SDL (%s)",filepath.toAscii().data());
+            } else {
+                sdlmgr->ReadDescriptors(filepath.toAscii().data());
+            }
+        }
+    }
 
     authClient->startLogin(user, pass);
 }
